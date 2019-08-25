@@ -1,0 +1,24 @@
+{
+  "name": "classroom-api",
+  "version": "1.0.0",
+  "description": "NodeJS API for classroom",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joydeep1701/classroom.git"
+  },
+  "keywords": [
+    "NodeJS",
+    "React",
+    "WebRTC"
+  ],
+  "author": "Joydeep Mukherjee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joydeep1701/classroom/issues"
+  },
+  "homepage": "https://github.com/joydeep1701/classroom#readme"
+}
