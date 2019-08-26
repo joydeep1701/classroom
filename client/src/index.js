@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history'
 import 'antd/dist/antd.css';
 // import './index.css';
 import configureStore from './configureStore.js';
@@ -10,13 +10,13 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 const initialState = {};
-const history = createHistory();
-const store = configureStore(initialState, history);
+const browserHistory = createBrowserHistory();
+const store = configureStore(initialState, browserHistory);
 
 
 ReactDOM.render(
   <Provider store={store}>
-    <ConnectedRouter history={history}>
+    <ConnectedRouter history={browserHistory}>
       <App />
     </ConnectedRouter>
   </Provider>,
@@ -25,3 +25,7 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+export {
+  browserHistory
+};
