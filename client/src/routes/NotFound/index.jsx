@@ -1,5 +1,6 @@
 import React from 'react';
-import { Layout, 
+import {
+  Layout, 
   Typography,
 } from 'antd';
 import {

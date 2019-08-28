@@ -27,7 +27,7 @@ class Banner extends React.PureComponent {
               <Button
                 type="primary"
                 onClick={() => {
-                  browserHistory.push('/class/random');
+                  browserHistory.push('/live/random');
               }}
               >
                 Join Meeting
