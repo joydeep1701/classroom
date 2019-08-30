@@ -8,6 +8,9 @@ import {
   pairwise,
   throttleTime,
  } from 'rxjs/operators';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { publishDrawingData } from './actions';
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
@@ -46,7 +49,7 @@ class DrawingPad extends React.Component {
 
   _getAllEventObs = () => {
     if (!is_touch_device()) {
-      return { 
+      return {
         start$: this._getEventObs('mousedown'), 
         move$: this._getEventObs('mousemove'), 
         cancel$: this._getEventObs('mouseleave'), 
@@ -74,7 +77,6 @@ class DrawingPad extends React.Component {
             map(e => ({
               x: e.offsetX || (e.touches[0].pageX),
               y: e.offsetY || (e.touches[0].clientY - this._offsetTop),
-              
             })),
             throttleTime(20),
             pairwise(),
@@ -87,6 +89,7 @@ class DrawingPad extends React.Component {
       .subscribe((pair) => {
         const [from, to] = pair;
         this._drawCanvas({ from, to });
+        this.props.publishDrawingData({ from, to });
       });
   }
   render() {
@@ -102,4 +105,13 @@ class DrawingPad extends React.Component {
   }
 }
 
-export default DrawingPad;
+const mapStateToProps = (state) => {
+  return {};
+};
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    publishDrawingData,
+  }, dispatch)
+)
+
+export default connect(mapStateToProps, mapDispatchToProps)(DrawingPad);
