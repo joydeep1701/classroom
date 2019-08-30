@@ -1,8 +1,11 @@
 import React from 'react';
-import {
-  HomePage, NotFound,
-} from './routes';
 import { Route, Switch } from 'react-router-dom';
+
+import {
+  HomePage,
+  NotFound,
+  LiveSession,
+} from './routes';
 
 
 function App() {
@@ -10,6 +13,7 @@ function App() {
     <div>
       <Switch>
         <Route exact path="/" component={HomePage} />
+        <Route exact path="/live/:classId" component={LiveSession} />
         <Route path="*" component={NotFound} />
       </Switch>
     </div>
