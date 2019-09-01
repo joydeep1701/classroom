@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { fromEvent } from 'rxjs';
+import { WEBSOCKET_SERVER } from '../../utils/apiPaths';
 import {
   START_DRAWING_PUBLISHER, DRAWING_PUBLISHER_PUBLISH,
 } from './actionTypes';
@@ -13,7 +13,7 @@ export const DrawPadSocketMiddleware = ({ dispatch }) => next => (action) => {
     const userToken = 'RandomFireBaseAuth';
     const meetingId = 'random';
 
-    const socket = io('http://localhost:8080', {
+    const socket = io(WEBSOCKET_SERVER, {
       path: '/ws',
       query: {
         token: userToken,
@@ -22,17 +22,10 @@ export const DrawPadSocketMiddleware = ({ dispatch }) => next => (action) => {
     });
     window.socket = socket;
 
-    socket.on('connectToRoom', e => {
-      console.log(e); 
-    })
-
+    socket.on('connectToRoom', () => {
+      dispatch(startDrawingPublisherSuccess());
+    });
     console.log(socket);
-
-  }
-  if (action.type === DRAWING_PUBLISHER_PUBLISH) {
-    if (window.socket) {
-      window.socket.emit('DRAWING_PUBLISHER_PUBLISH', action.payload);
-    }
   }
   next(action);
 }
