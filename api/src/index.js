@@ -2,6 +2,7 @@
 import express from 'express';
 import http from 'http';
 import SocketIO from 'socket.io';
+import cors from 'cors';
 import { SocketIOAuth } from './middleware';
 
 const app = express();
@@ -13,7 +14,9 @@ const io = new SocketIO(server, {
 const port = process.env.PORT || 8080;
 
 app.use(express.json());
+app.use(cors());
 io.use(SocketIOAuth);
+io.origins('*:*') // for latest version
 
 io.on('connection', (socket) => {
   console.log(`Client Connected ${socket.id}`);
