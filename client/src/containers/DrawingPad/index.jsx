@@ -4,13 +4,17 @@ import {
   switchMap,
   takeUntil,
   map,
+  filter,
   tap,
   pairwise,
   throttleTime,
  } from 'rxjs/operators';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { publishDrawingData } from './actions';
+import { 
+  publishDrawingData,
+  startDrawingPublisher,
+} from './actions';
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
@@ -27,6 +31,9 @@ class DrawingPad extends React.Component {
     this.canvasCtx = null;
   }
   componentDidMount() {
+    // Request Socket Connection
+    this.props.startDrawingPublisher();
+
     // Set Context
     const canv = this.canvasRef.current
     this._offsetLeft = canv.offsetLeft;
@@ -38,12 +45,35 @@ class DrawingPad extends React.Component {
 
     console.log(rect, scale, this._offsetLeft, this._offsetTop);
     this._startCanvasObs();
+    this._listenOnSocket();
   }
   _drawCanvas = ({ from, to }) => {
     this.canvasCtx.beginPath();
     this.canvasCtx.moveTo(from.x, from.y);
     this.canvasCtx.lineTo(to.x, to.y);
     this.canvasCtx.stroke();
+  }
+  _broadcastToSocket = (event) => {
+    if (window.socket) {
+      window.socket.emit('drawEvent', event);
+    }
+  }
+  _listenOnSocket = () => {
+    if (window.socket) {
+      fromEvent(window.socket, 'drawEvent')
+        .pipe(
+          filter((e) => {
+            return e.clientId !== window.socket.id;
+          }),
+          map((e) => ({
+            ...e.payload,
+          }))
+        )
+        .subscribe((pair) => {
+          const { from , to } = pair;
+          this._drawCanvas({ from, to });
+        })
+    }
   }
   _getEventObs = e => fromEvent(this.canvasRef.current, e);
 
@@ -89,7 +119,8 @@ class DrawingPad extends React.Component {
       .subscribe((pair) => {
         const [from, to] = pair;
         this._drawCanvas({ from, to });
-        this.props.publishDrawingData({ from, to });
+        this._broadcastToSocket({ from, to });
+        // this.props.publishDrawingData({ from, to });
       });
   }
   render() {
@@ -111,6 +142,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => (
   bindActionCreators({
     publishDrawingData,
+    startDrawingPublisher,
   }, dispatch)
 )
 
